@@ -10,35 +10,37 @@ bl_info = {
 
 import bpy
 
-{%- if prop_imports %}
+{% if prop_imports %}
 from bpy.props import {{ prop_imports | join(", ") }}
-{%- endif %}
+{% endif %}
 
 
-{# ─────────────────────────────────────────
-   PROPERTIES REGISTER / UNREGISTER
-   ───────────────────────────────────────── #}
+# ─────────────────────────────────────────
+# PROPERTIES REGISTER / UNREGISTER
+# ─────────────────────────────────────────
+
 def register_properties():
-    {%- for p in properties %}
+{% for p in properties %}
     {{ p.owner_bpy }}.{{ p.attr }} = {{ p.func_name }}(
         name="{{ p.name }}",
         description="{{ p.description }}",
         default={{ p.default_code }}
     )
-    {%- endfor %}
+{% endfor %}
 
 
 def unregister_properties():
-    {%- for p in properties %}
+{% for p in properties %}
     if hasattr({{ p.owner_bpy }}, "{{ p.attr }}"):
         del {{ p.owner_bpy }}.{{ p.attr }}
-    {%- endfor %}
+{% endfor %}
 
 
-{# ─────────────────────────────────────────
-   OPERATORS
-   ───────────────────────────────────────── #}
+# ─────────────────────────────────────────
+# OPERATORS
+# ─────────────────────────────────────────
 {% for op in operators %}
+
 class {{ op.class_name }}(bpy.types.Operator):
     """{{ op.description }}"""
     bl_idname = "{{ op.idname }}"
@@ -49,14 +51,14 @@ class {{ op.class_name }}(bpy.types.Operator):
         # You can customize operator logic later
         self.report({'INFO'}, "Operator {{ op.idname }} executed.")
         return {'FINISHED'}
-
 {% endfor %}
 
 
-{# ─────────────────────────────────────────
-   PANELS
-   ───────────────────────────────────────── #}
+# ─────────────────────────────────────────
+# PANELS
+# ─────────────────────────────────────────
 {% for panel in panels %}
+
 class {{ panel.class_name }}(bpy.types.Panel):
     """Auto-generated panel"""
     bl_label = "{{ panel.label }}"
@@ -74,22 +76,22 @@ class {{ panel.class_name }}(bpy.types.Panel):
 
         layout.label(text="{{ panel.label }}")
 
-        {# Draw properties #}
-        {%- for prop in panel.properties %}
+        # Properties
+{% for prop in panel.properties %}
         layout.prop({{ prop.context_expr }}, "{{ prop.attr }}")
-        {%- endfor %}
+{% endfor %}
 
-        {# Draw operators #}
-        {%- for op in panel.operators %}
+        # Operators
+{% for op in panel.operators %}
         layout.operator("{{ op.idname }}", text="{{ op.label }}")
-        {%- endfor %}
-
+{% endfor %}
 {% endfor %}
 
 
 classes = [
-    {%- for op in operators %}{{ op.class_name }}, {% endfor -%}
-    {%- for panel in panels %}{{ panel.class_name }}, {% endfor -%}
+{% for op in operators %}    {{ op.class_name }},
+{% endfor %}{% for panel in panels %}    {{ panel.class_name }},
+{% endfor %}
 ]
 
 

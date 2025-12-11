@@ -7,21 +7,38 @@ bl_info = {
     "category": "Sequencer",
 }
 
-import bpyfrom bpy.props import BoolProperty, StringProperty
+import bpy
 
-def register_properties():    bpy.types.Scene.my_main_label = StringProperty(
+from bpy.props import BoolProperty, StringProperty
+
+
+# ─────────────────────────────────────────
+# PROPERTIES REGISTER / UNREGISTER
+# ─────────────────────────────────────────
+
+def register_properties():
+    bpy.types.Scene.my_main_label = StringProperty(
         name="Main Label",
         description="Main label text for overlays",
         default='Hello from TOML'
-    )    bpy.types.Scene.my_show_debug = BoolProperty(
+    )
+    bpy.types.Scene.my_show_debug = BoolProperty(
         name="Show Debug",
         description="Toggle debug mode",
         default=True
     )
 
-def unregister_properties():    if hasattr(bpy.types.Scene, "my_main_label"):
-        del bpy.types.Scene.my_main_label    if hasattr(bpy.types.Scene, "my_show_debug"):
+
+def unregister_properties():
+    if hasattr(bpy.types.Scene, "my_main_label"):
+        del bpy.types.Scene.my_main_label
+    if hasattr(bpy.types.Scene, "my_show_debug"):
         del bpy.types.Scene.my_show_debug
+
+
+# ─────────────────────────────────────────
+# OPERATORS
+# ─────────────────────────────────────────
 
 class MYADDON_OT_dummy_operator(bpy.types.Operator):
     """Dummy operator generated from TOML"""
@@ -35,6 +52,9 @@ class MYADDON_OT_dummy_operator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+# ─────────────────────────────────────────
+# PANELS
+# ─────────────────────────────────────────
 
 class MYADDON_PT_main(bpy.types.Panel):
     """Auto-generated panel"""
@@ -53,8 +73,13 @@ class MYADDON_PT_main(bpy.types.Panel):
 
         layout.label(text="Main Panel")
 
-        layout.prop(context.scene, "my_main_label")        layout.prop(context.scene, "my_show_debug")
+        # Properties
+        layout.prop(context.scene, "my_main_label")
+        layout.prop(context.scene, "my_show_debug")
+
+        # Operators
         layout.operator("myaddon.dummy_operator", text="Run Dummy")
+
 class MYADDON_PT_secondary(bpy.types.Panel):
     """Auto-generated panel"""
     bl_label = "Secondary Panel"
@@ -72,11 +97,18 @@ class MYADDON_PT_secondary(bpy.types.Panel):
 
         layout.label(text="Secondary Panel")
 
+        # Properties
         layout.prop(context.scene, "my_main_label")
+
+        # Operators
         layout.operator("myaddon.dummy_operator", text="Run Dummy (Secondary)")
 
 
-classes = [MYADDON_OT_dummy_operator, MYADDON_PT_main, MYADDON_PT_secondary, ]
+classes = [
+    MYADDON_OT_dummy_operator,
+    MYADDON_PT_main,
+    MYADDON_PT_secondary,
+]
 
 
 def register():

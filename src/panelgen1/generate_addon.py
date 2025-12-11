@@ -173,7 +173,7 @@ def main():
     spec_path = here.parent.parent / "panel_spec.toml"
     tmpl_dir = here / "templates"
     # output_path = here / "my_panel_addon.py"  # Single-file Blender add-on
-    output_path = here.parent.parent / "my_panel_addon.py"  # Single-file Blender add-on
+    output_path = here.parent.parent / "scripts" / "addons" / "my_panel_addon.py"  # Single-file Blender add-on
 
     spec = load_spec(spec_path)
     ctx = prepare_context(spec)
