@@ -1,0 +1,24 @@
+[project]
+name = "panelgen1"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Khan Kibria", email = "khan.kibria@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "jinja2>=3.1.6",
+]
+
+[project.scripts]
+panelgen1 = "panelgen1.generate_addon:main"
+
+[build-system]
+requires = ["uv_build>=0.9.15,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "fake-bpy-module-latest>=20251003",
+]

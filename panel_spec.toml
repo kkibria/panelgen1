@@ -1,0 +1,73 @@
+[addon]
+module_name = "my_panel_addon"
+bl_name = "My Panel Add-on"
+author = "You"
+version = [0, 0, 1]
+blender_min = [5, 0, 0]
+category = "Sequencer"
+location = "VSE > Sidebar > My Panels"
+tab_name = "MyPanel"
+
+# ─────────────────────────────────────────
+# PROPERTIES
+# ─────────────────────────────────────────
+# Supported types in this simple version:
+#   StringProperty, BoolProperty, IntProperty, FloatProperty
+
+[[properties]]
+id = "scene.main_label"
+owner = "Scene"                  # maps to bpy.types.Scene
+attr = "my_main_label"           # the actual attribute name
+type = "StringProperty"
+name = "Main Label"
+description = "Main label text for overlays"
+default = "Hello from TOML"
+
+[[properties]]
+id = "scene.show_debug"
+owner = "Scene"
+attr = "my_show_debug"
+type = "BoolProperty"
+name = "Show Debug"
+description = "Toggle debug mode"
+default = true
+
+# ─────────────────────────────────────────
+# PANELS (multiple)
+# ─────────────────────────────────────────
+
+[[panels]]
+idname = "MYADDON_PT_main"
+label = "Main Panel"
+space_type = "SEQUENCE_EDITOR"
+region_type = "UI"
+category = "MyPanel"
+properties = ["scene.main_label", "scene.show_debug"]
+
+  [[panels.operators]]
+  idname = "myaddon.dummy_operator"
+  label = "Run Dummy"
+  description = "Runs the dummy operator"
+
+[[panels]]
+idname = "MYADDON_PT_secondary"
+label = "Secondary Panel"
+space_type = "SEQUENCE_EDITOR"
+region_type = "UI"
+category = "MyPanel"
+properties = ["scene.main_label"]
+
+  [[panels.operators]]
+  idname = "myaddon.dummy_operator"
+  label = "Run Dummy (Secondary)"
+  description = "Runs the dummy operator from secondary panel"
+
+# ─────────────────────────────────────────
+# OPERATORS
+# ─────────────────────────────────────────
+
+[[operators]]
+idname = "myaddon.dummy_operator"
+label = "Dummy Operator"
+description = "Dummy operator generated from TOML"
+options = ["REGISTER"]  # or ["REGISTER", "UNDO"], or empty

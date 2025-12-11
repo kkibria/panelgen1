@@ -1,0 +1,109 @@
+{# templates/addon_single.jinja2 #}
+bl_info = {
+    "name": "{{ addon.bl_name }}",
+    "author": "{{ addon.author }}",
+    "version": ({{ addon.version | join(", ") }}),
+    "blender": ({{ addon.blender_min | join(", ") }}),
+    "location": "{{ addon.location }}",
+    "category": "{{ addon.category }}",
+}
+
+import bpy
+
+{%- if prop_imports %}
+from bpy.props import {{ prop_imports | join(", ") }}
+{%- endif %}
+
+
+{# ─────────────────────────────────────────
+   PROPERTIES REGISTER / UNREGISTER
+   ───────────────────────────────────────── #}
+def register_properties():
+    {%- for p in properties %}
+    {{ p.owner_bpy }}.{{ p.attr }} = {{ p.func_name }}(
+        name="{{ p.name }}",
+        description="{{ p.description }}",
+        default={{ p.default_code }}
+    )
+    {%- endfor %}
+
+
+def unregister_properties():
+    {%- for p in properties %}
+    if hasattr({{ p.owner_bpy }}, "{{ p.attr }}"):
+        del {{ p.owner_bpy }}.{{ p.attr }}
+    {%- endfor %}
+
+
+{# ─────────────────────────────────────────
+   OPERATORS
+   ───────────────────────────────────────── #}
+{% for op in operators %}
+class {{ op.class_name }}(bpy.types.Operator):
+    """{{ op.description }}"""
+    bl_idname = "{{ op.idname }}"
+    bl_label = "{{ op.label }}"
+    bl_options = {{ op.options_code }}
+
+    def execute(self, context):
+        # You can customize operator logic later
+        self.report({'INFO'}, "Operator {{ op.idname }} executed.")
+        return {'FINISHED'}
+
+{% endfor %}
+
+
+{# ─────────────────────────────────────────
+   PANELS
+   ───────────────────────────────────────── #}
+{% for panel in panels %}
+class {{ panel.class_name }}(bpy.types.Panel):
+    """Auto-generated panel"""
+    bl_label = "{{ panel.label }}"
+    bl_idname = "{{ panel.idname }}"
+    bl_space_type = "{{ panel.space_type }}"
+    bl_region_type = "{{ panel.region_type }}"
+    bl_category = "{{ panel.category }}"
+
+    def draw(self, context):
+        layout = self.layout
+        scene = getattr(context, "scene", None)
+        if scene is None:
+            layout.label(text="No scene context.")
+            return
+
+        layout.label(text="{{ panel.label }}")
+
+        {# Draw properties #}
+        {%- for prop in panel.properties %}
+        layout.prop({{ prop.context_expr }}, "{{ prop.attr }}")
+        {%- endfor %}
+
+        {# Draw operators #}
+        {%- for op in panel.operators %}
+        layout.operator("{{ op.idname }}", text="{{ op.label }}")
+        {%- endfor %}
+
+{% endfor %}
+
+
+classes = [
+    {%- for op in operators %}{{ op.class_name }}, {% endfor -%}
+    {%- for panel in panels %}{{ panel.class_name }}, {% endfor -%}
+]
+
+
+def register():
+    register_properties()
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+
+def unregister():
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
+    unregister_properties()
+
+
+if __name__ == "__main__":
+    register()
