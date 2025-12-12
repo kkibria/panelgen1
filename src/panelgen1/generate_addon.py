@@ -202,21 +202,24 @@ def main():
     project_root = Path(os.getcwd())            # .../panelgen1
     spec_path = project_root / "panel_spec.toml"
 
+    spec = load_spec(spec_path)
+    ctx = prepare_context(spec)
+    mod_name = ctx["addon"]["module_name"]
+
     tmpl_dir = get_template_path()
 
-    addons_dir = project_root / "scripts" / "addons"
+    addons_dir = project_root / "scripts" / "addons" / mod_name
     addons_dir.mkdir(parents=True, exist_ok=True)
 
-    output_path = addons_dir / "my_panel_addon.py"
-
+    output_path = addons_dir / mod_name / "__init__.py"
 
     print(f"[panelgen] project_root = {project_root}")
-    # print(f"[panelgen] tmpl_dir     = {tmpl_dir}")
+    print(f"[panelgen] tmpl_dir     = {tmpl_dir}")
     print(f"[panelgen] spec_path    = {spec_path}")
     print(f"[panelgen] output_path  = {output_path}")
 
-    spec = load_spec(spec_path)
-    ctx = prepare_context(spec)
+    # spec = load_spec(spec_path)
+    # ctx = prepare_context(spec)
 
     env = Environment(
         loader=FileSystemLoader(str(tmpl_dir)),

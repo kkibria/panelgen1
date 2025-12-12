@@ -1,9 +1,15 @@
+import os
+import argparse
+import sys
+from warnings import warn
+
 from pathlib import Path
 from . import generate_addon, get_template_path
 import sys
 import shutil
 
-def _cmd_init(target_dir: Path) -> None:
+def _cmd_init(target_dir, **kwargs) -> None:
+    target_dir=Path(target_dir)
     target_dir = target_dir.resolve()
     print(f"[panelgen] init: {target_dir}")
 
@@ -23,37 +29,54 @@ def _cmd_init(target_dir: Path) -> None:
 
     print(f"[panelgen] addons dir: {addons_dir}")
 
-
-def _cmd_gen() -> None:
+def _cmd_gen(**kwargs) -> None:
     # uses current working directory as project root
     generate_addon.main()
 
+def basedir(kwargs):
+    basedir = os.path.expanduser(f"~/.{kwargs['app']}/")
+    os.makedirs(basedir, exist_ok=True)
+    return basedir
 
-def main() -> None:
-    """
-    Minimal CLI:
+def main():
+    params = {"app": "panelgen"}
 
-      python -m panelgen1 init <directory>
-      python -m panelgen1 gen
-    """
-    args = sys.argv[1:]
+    parser = argparse.ArgumentParser(
+        prog=params["app"],
+        description='Creates blender add-on',
+        epilog=f'Go to https://github.com/kkibria/panelgen1 for instructions')
 
-    if not args or args[0] in {"-h", "--help", "help"}:
-        print("Usage:")
-        print("  python -m panelgen1 init <directory>")
-        print("  python -m panelgen1 gen")
-        return
+    subparsers = parser.add_subparsers(title="commands", dest="command", help="Available commands") #
 
-    cmd = args[0]
+    parser_init = subparsers.add_parser("init", help="Initialize Add-on Project")
+    parser_init.add_argument("target_dir", type=str, help="Project Path")
+    parser_init.set_defaults(func=_cmd_init)
 
-    if cmd == "init":
-        if len(args) < 2:
-            print("panelgen1: 'init' requires a <directory>")
-            return
-        _cmd_init(Path(args[1]))
-    elif cmd == "gen":
-        _cmd_gen()
-    else:
-        print(f"panelgen1: unknown command '{cmd}'")
-        print("Use: init <directory> or gen")
+    parser_gen = subparsers.add_parser("gen", help="Generate python UI file")
+    parser_gen.set_defaults(func=_cmd_gen)
 
+    args = parser.parse_args()
+    params = params | vars(args)
+
+    set_warnigs_hook()
+    try:
+        if hasattr(args, "func"):
+            args.func(**params)
+        else:
+            # If no subcommand is given (e.g., just running './myprogram.py'), print help
+            parser.print_help()
+    except Exception as e:
+        print(f'{e.__class__.__name__}:', *e.args)
+        return 1
+    
+    return 0
+
+def set_warnigs_hook():
+    import sys
+    import warnings
+    def on_warn(message, category, filename, lineno, file=None, line=None):
+        print(f'Warning: {message}', file=sys.stderr)
+    warnings.showwarning = on_warn
+
+if __name__ == '__main__':
+    sys.exit(main())
