@@ -6,16 +6,19 @@ PanelGen is a lightweight CLI tool that generates Blender add-ons from a simple,
 With PanelGen, you can create complex Blender UI panels, operators, and properties **without writing boilerplate**, and regenerate the add-on instantly as your UI evolves.
 
 ---
+# 0. Requirement
+You need to have python installed. Since you are running blender and be building a Blender add-on, most likely you already have python. You also need to have `uv` package manager instlled. You may use other package managers or `pip` but I have only tested it with `uv`.
+
 
 # 1. Installation
 
-PanelGen works like any Python CLI tool. During development, run it via `uv`:
+PanelGen works like any Python CLI tool. to install it via `uv`:
 
 ```bash
-uv run python -m panelgen1 <command>
-````
+uv tool -n install git+https://github.com/kkibria/panelgen1.git
+```
 
-If installed as a tool:
+Once installed, run it as following:
 
 ```bash
 panelgen <command>
