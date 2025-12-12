@@ -1,7 +1,7 @@
 bl_info = {
     "name": "My Panel Add-on",
     "author": "You",
-    "version": (0, 0, 1),
+    "version": (0, 0, 2),
     "blender": (5, 0, 0),
     "location": "VSE > Sidebar > My Panels",
     "category": "Sequencer",
@@ -9,7 +9,7 @@ bl_info = {
 
 import bpy
 
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, EnumProperty, IntProperty, StringProperty
 
 
 # ─────────────────────────────────────────
@@ -20,13 +20,21 @@ def register_properties():
     bpy.types.Scene.my_main_label = StringProperty(
         name="Main Label",
         description="Main label text for overlays",
-        default='Hello from TOML'
-    )
+        default='Hello from TOML'    )
     bpy.types.Scene.my_show_debug = BoolProperty(
         name="Show Debug",
         description="Toggle debug mode",
-        default=True
-    )
+        default=True    )
+    bpy.types.Scene.my_repeat_count = IntProperty(
+        name="Repeat Count",
+        description="How many times to repeat something",
+        default=3,
+        min=0, max=20    )
+    bpy.types.Scene.my_mode = EnumProperty(
+        name="Mode",
+        description="Demo enum mode",
+        default='OPT_A',
+        items=[("OPT_A", "Option A", "First option"), ("OPT_B", "Option B", "Second option")]    )
 
 
 def unregister_properties():
@@ -34,6 +42,10 @@ def unregister_properties():
         del bpy.types.Scene.my_main_label
     if hasattr(bpy.types.Scene, "my_show_debug"):
         del bpy.types.Scene.my_show_debug
+    if hasattr(bpy.types.Scene, "my_repeat_count"):
+        del bpy.types.Scene.my_repeat_count
+    if hasattr(bpy.types.Scene, "my_mode"):
+        del bpy.types.Scene.my_mode
 
 
 # ─────────────────────────────────────────
@@ -41,15 +53,17 @@ def unregister_properties():
 # ─────────────────────────────────────────
 
 class MYADDON_OT_dummy_operator(bpy.types.Operator):
-    """Dummy operator generated from TOML"""
+    """Dummy operator with custom body"""
     bl_idname = "myaddon.dummy_operator"
     bl_label = "Dummy Operator"
     bl_options = {"REGISTER"}
 
     def execute(self, context):
-        # You can customize operator logic later
-        self.report({'INFO'}, "Operator myaddon.dummy_operator executed.")
+        scene = context.scene
+        self.report({'INFO'}, f"Label: {scene.my_main_label}, Mode: {scene.my_mode}, Count: {scene.my_repeat_count}")
+        print("[Dummy Operator] Debug:", scene.my_show_debug)
         return {'FINISHED'}
+
 
 
 # ─────────────────────────────────────────
@@ -76,6 +90,8 @@ class MYADDON_PT_main(bpy.types.Panel):
         # Properties
         layout.prop(context.scene, "my_main_label")
         layout.prop(context.scene, "my_show_debug")
+        layout.prop(context.scene, "my_repeat_count")
+        layout.prop(context.scene, "my_mode")
 
         # Operators
         layout.operator("myaddon.dummy_operator", text="Run Dummy")
@@ -99,6 +115,7 @@ class MYADDON_PT_secondary(bpy.types.Panel):
 
         # Properties
         layout.prop(context.scene, "my_main_label")
+        layout.prop(context.scene, "my_mode")
 
         # Operators
         layout.operator("myaddon.dummy_operator", text="Run Dummy (Secondary)")

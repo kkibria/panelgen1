@@ -24,7 +24,8 @@ def register_properties():
     {{ p.owner_bpy }}.{{ p.attr }} = {{ p.func_name }}(
         name="{{ p.name }}",
         description="{{ p.description }}",
-        default={{ p.default_code }}
+        default={{ p.default_code }}{% if p.extra_args %},
+        {{ p.extra_args | join(", ") }}{% endif %}
     )
 {% endfor %}
 
@@ -48,9 +49,7 @@ class {{ op.class_name }}(bpy.types.Operator):
     bl_options = {{ op.options_code }}
 
     def execute(self, context):
-        # You can customize operator logic later
-        self.report({'INFO'}, "Operator {{ op.idname }} executed.")
-        return {'FINISHED'}
+{{ op.body }}
 {% endfor %}
 
 

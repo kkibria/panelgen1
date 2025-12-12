@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-panelgen1 = "panelgen1.generate_addon:main"
+panelgen = "panelgen1.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.9.15,<0.10.0"]
