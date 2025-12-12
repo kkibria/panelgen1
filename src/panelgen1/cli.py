@@ -58,16 +58,16 @@ def main():
     args = parser.parse_args()
     params = params | vars(args)
 
-    set_warnigs_hook()
-    try:
-        if hasattr(args, "func"):
-            args.func(**params)
-        else:
-            # If no subcommand is given (e.g., just running './myprogram.py'), print help
-            parser.print_help()
-    except Exception as e:
-        print(f'{e.__class__.__name__}:', *e.args)
-        return 1
+    # set_warnigs_hook()
+    # try:
+    if hasattr(args, "func"):
+        args.func(**params)
+    else:
+        # If no subcommand is given (e.g., just running './myprogram.py'), print help
+        parser.print_help()
+    # except Exception as e:
+        # print(f'{e.__class__.__name__}:', *e.args)
+        # return 1
     
     return 0
 

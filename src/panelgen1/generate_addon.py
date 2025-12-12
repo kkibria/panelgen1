@@ -211,7 +211,7 @@ def main():
     addons_dir = project_root / "scripts" / "addons" / mod_name
     addons_dir.mkdir(parents=True, exist_ok=True)
 
-    output_path = addons_dir / mod_name / "__init__.py"
+    output_path = addons_dir / "__init__.py"
 
     print(f"[panelgen] project_root = {project_root}")
     print(f"[panelgen] tmpl_dir     = {tmpl_dir}")
