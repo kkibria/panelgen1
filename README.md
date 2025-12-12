@@ -12,7 +12,7 @@ You need to have python installed. Since you are running blender and be building
 
 # 1. Installation
 
-PanelGen works like any Python CLI tool. to install it via `uv`:
+PanelGen works like any Python CLI tool. To install it via `uv`:
 
 ```bash
 uv tool -n install git+https://github.com/kkibria/panelgen1.git
