@@ -1,12 +1,10 @@
 import os
 import argparse
 import sys
-from warnings import warn
+import shutil
 
 from pathlib import Path
 from . import generate_addon, get_template_path
-import sys
-import shutil
 
 def _cmd_init(target_dir, **kwargs) -> None:
     target_dir=Path(target_dir)
@@ -49,11 +47,11 @@ def main():
     subparsers = parser.add_subparsers(title="commands", dest="command", help="Available commands") #
 
     parser_init = subparsers.add_parser("init", help="Initialize Add-on Project")
-    parser_init.add_argument("target_dir", type=str, help="Project Path")
+    parser_init.add_argument("target-dir", type=str, help="Project Path")
     parser_init.set_defaults(func=_cmd_init)
 
     parser_gen = subparsers.add_parser("gen", help="Generate python UI file")
-    parser_gen.add_argument("--toml_path", type=str, default="panel_spec.toml", help="toml spec file path")
+    parser_gen.add_argument("--toml-path", type=str, default="panel_spec.toml", help="toml spec file path")
     parser_gen.set_defaults(func=_cmd_gen)
 
     args = parser.parse_args()
