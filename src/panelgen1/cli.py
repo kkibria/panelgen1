@@ -29,7 +29,7 @@ def _cmd_init(target_dir, **kwargs) -> None:
 
 def _cmd_gen(toml_path, **kwargs) -> None:
     # uses current working directory as project root
-    generate_addon.main()
+    generate_addon.main(toml_path)
 
 def basedir(kwargs):
     basedir = os.path.expanduser(f"~/.{kwargs['app']}/")
