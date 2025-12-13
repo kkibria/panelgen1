@@ -12,13 +12,18 @@ You need to have python installed. Since you are running blender and be building
 
 # 1. Installation
 
-PanelGen works like any Python CLI tool. To install it via `uv`:
+If you have older version installed you need to remove it first. To remove it via `uv`:
+```bash
+uv tool uninstall panelgen1
+```
+
+To install it via `uv`:
 
 ```bash
 uv tool -n install git+https://github.com/kkibria/panelgen1.git
 ```
 
-Once installed, run it as following:
+PanelGen works like any Python CLI tool. Once installed, run it as following:
 
 ```bash
 panelgen <command>
