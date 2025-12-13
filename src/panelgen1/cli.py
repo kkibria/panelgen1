@@ -29,7 +29,7 @@ def _cmd_init(target_dir, **kwargs) -> None:
 
     print(f"[panelgen] addons dir: {addons_dir}")
 
-def _cmd_gen(**kwargs) -> None:
+def _cmd_gen(toml_path, **kwargs) -> None:
     # uses current working directory as project root
     generate_addon.main()
 
@@ -44,7 +44,7 @@ def main():
     parser = argparse.ArgumentParser(
         prog=params["app"],
         description='Creates blender add-on',
-        epilog=f'Go to https://github.com/kkibria/panelgen1 for instructions')
+        epilog=f'Go to https://github.com/kkibria/panelgen1 for README/instructions')
 
     subparsers = parser.add_subparsers(title="commands", dest="command", help="Available commands") #
 
@@ -53,21 +53,22 @@ def main():
     parser_init.set_defaults(func=_cmd_init)
 
     parser_gen = subparsers.add_parser("gen", help="Generate python UI file")
+    parser_gen.add_argument("--toml_path", type=str, default="panel_spec.toml", help="toml spec file path")
     parser_gen.set_defaults(func=_cmd_gen)
 
     args = parser.parse_args()
     params = params | vars(args)
 
-    # set_warnigs_hook()
-    # try:
-    if hasattr(args, "func"):
-        args.func(**params)
-    else:
-        # If no subcommand is given (e.g., just running './myprogram.py'), print help
-        parser.print_help()
-    # except Exception as e:
-        # print(f'{e.__class__.__name__}:', *e.args)
-        # return 1
+    set_warnigs_hook()
+    try:
+        if hasattr(args, "func"):
+            args.func(**params)
+        else:
+            # If no subcommand is given (e.g., just running './myprogram.py'), print help
+            parser.print_help()
+    except Exception as e:
+        print(f'{e.__class__.__name__}:', *e.args)
+        return 1
     
     return 0
 

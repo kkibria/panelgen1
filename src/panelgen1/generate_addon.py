@@ -3,6 +3,7 @@ from pathlib import Path
 import tomllib  # Python 3.11+
 from jinja2 import Environment, FileSystemLoader
 from . import get_template_path
+from prompt_toolkit.shortcuts import yes_no_dialog
 
 
 # ─────────────────────────────────────────
@@ -196,11 +197,11 @@ def prepare_context(spec: dict) -> dict:
 # Main
 # ─────────────────────────────────────────
 
-def main():
+def main(toml_path = "panel_spec.toml"):
     # here = Path(__file__).resolve().parent       # .../src/panelgen1
     # project_root = here.parent.parent            # .../panelgen1
     project_root = Path(os.getcwd())            # .../panelgen1
-    spec_path = project_root / "panel_spec.toml"
+    spec_path = project_root / toml_path
 
     spec = load_spec(spec_path)
     ctx = prepare_context(spec)
@@ -214,12 +215,17 @@ def main():
     output_path = addons_dir / "__init__.py"
 
     print(f"[panelgen] project_root = {project_root}")
-    print(f"[panelgen] tmpl_dir     = {tmpl_dir}")
+    # print(f"[panelgen] tmpl_dir     = {tmpl_dir}")
     print(f"[panelgen] spec_path    = {spec_path}")
     print(f"[panelgen] output_path  = {output_path}")
 
-    # spec = load_spec(spec_path)
-    # ctx = prepare_context(spec)
+    if output_path.is_file():
+        result = yes_no_dialog(
+            title="Overwrite Warning!", text=f"Overwrite '{output_path}'?"
+        ).run()
+        if not result:
+            print(f"[panelgen] Generation aborted!")
+            return
 
     env = Environment(
         loader=FileSystemLoader(str(tmpl_dir)),
@@ -237,7 +243,6 @@ def main():
 
     output_path.write_text(code, encoding="utf-8")
     print(f"[panelgen] Generated add-on: {output_path}")
-
 
 if __name__ == "__main__":
     main()
