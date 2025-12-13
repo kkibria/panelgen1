@@ -61,7 +61,7 @@ Generates the Blender add-on using the current working directory as the project 
 The command:
 
 ```bash
-panelgen gen
+panelgen gen [--toml-file <toml_file>]
 ```
 
 Reads:
@@ -91,7 +91,10 @@ my_project/
   panel_spec.toml
   scripts/
     addons/
-      my_panel_addon.py  ← Generated file (overwrite every run)
+      my_panel_addon/ ← same as module_name in toml
+        __init__.py  ← Generated file (overwrite every run)
+      another_my_panel_addon/ ← same as module_name in toml
+        __init__.py  ← Generated file (overwrite every run)
 ```
 
 You should **not edit** `my_panel_addon.py` manually.
@@ -99,7 +102,9 @@ Instead, modify `panel_spec.toml` and regenerate.
 
 ---
 
-# 4. Overview of `panel_spec.toml`
+# 4. Overview of spec toml file
+The default toml file is `panel_spec.toml`. You can have more toml files for additional
+add-ons.
 
 The TOML file describes:
 
