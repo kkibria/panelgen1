@@ -6,16 +6,16 @@ import shutil
 from pathlib import Path
 from . import generate_addon, get_template_path
 
-def _cmd_init(target_dir, **kwargs) -> None:
-    target_dir=Path(target_dir)
-    target_dir = target_dir.resolve()
-    print(f"[panelgen] init: {target_dir}")
+def _cmd_init(targetdir, **kwargs) -> None:
+    targetdir=Path(targetdir)
+    targetdir = targetdir.resolve()
+    print(f"[panelgen] init: {targetdir}")
 
     spec = "panel_spec.toml"
-    spec_path = target_dir / spec
-    addons_dir = target_dir / "scripts" / "addons"
+    spec_path = targetdir / spec
+    addons_dir = targetdir / "scripts" / "addons"
 
-    target_dir.mkdir(parents=True, exist_ok=True)
+    targetdir.mkdir(parents=True, exist_ok=True)
     addons_dir.mkdir(parents=True, exist_ok=True)
 
     if spec_path.exists():
@@ -27,9 +27,9 @@ def _cmd_init(target_dir, **kwargs) -> None:
 
     print(f"[panelgen] addons dir: {addons_dir}")
 
-def _cmd_gen(toml_path, **kwargs) -> None:
+def _cmd_gen(tomlpath, **kwargs) -> None:
     # uses current working directory as project root
-    generate_addon.main(toml_path)
+    generate_addon.main(tomlpath)
 
 def basedir(kwargs):
     basedir = os.path.expanduser(f"~/.{kwargs['app']}/")
@@ -47,15 +47,16 @@ def main():
     subparsers = parser.add_subparsers(title="commands", dest="command", help="Available commands") #
 
     parser_init = subparsers.add_parser("init", help="Initialize Add-on Project")
-    parser_init.add_argument("target-dir", type=str, help="Project Path")
+    parser_init.add_argument("targetdir", type=str, help="Project Path")
     parser_init.set_defaults(func=_cmd_init)
 
     parser_gen = subparsers.add_parser("gen", help="Generate python UI file")
-    parser_gen.add_argument("--toml-path", type=str, default="panel_spec.toml", help="toml spec file path")
+    parser_gen.add_argument("--tomlpath", type=str, default="panel_spec.toml", help="toml spec file path")
     parser_gen.set_defaults(func=_cmd_gen)
 
     args = parser.parse_args()
     params = params | vars(args)
+    print(params)
 
     set_warnigs_hook()
     try:
